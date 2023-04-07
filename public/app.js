@@ -5,10 +5,8 @@ let createScene = function () {
     let scene = new BABYLON.Scene(engine);
     scene.clearColor = new BABYLON.Color4(0, 0, 0, 1);
 
-    // Camera
-    let camera = new BABYLON.FreeCamera("camera", new BABYLON.Vector3(0, 5, -15), scene);
-    camera.setTarget(BABYLON.Vector3.Zero());
-    camera.attachControl(canvas, true);
+    let material = new BABYLON.StandardMaterial("material", scene);
+    material.diffuseColor = new BABYLON.Color3(255, 1, 1);
 
     // Light
     let light = new BABYLON.PointLight("pointLight", new BABYLON.Vector3(0, 10, 0), scene);
@@ -21,6 +19,7 @@ let createScene = function () {
 
     // Create paddles
     let leftPaddle = BABYLON.MeshBuilder.CreateBox("leftPaddle", { height: 1, width: 2, depth: 0.5 }, scene);
+    leftPaddle.material = material;
     let rightPaddle = BABYLON.MeshBuilder.CreateBox("rightPaddle", { height: 1, width: 2, depth: 0.5 }, scene);
     leftPaddle.position.x = -4;
     rightPaddle.position.x = 4;
@@ -30,12 +29,24 @@ let createScene = function () {
     let ball = BABYLON.MeshBuilder.CreateSphere("ball", { diameter: 0.5 }, scene);
     ball.position.y = 0.5;
 
+
+    // Camera
+    let camera = new BABYLON.FreeCamera("camera", new BABYLON.Vector3(-6, 3, 0), scene);
+    camera.rotation.y = Math.PI / 2; // rotate the camera to face the other paddle
+    camera.rotation.x = Math.PI / 5; 
+
+    // Attach the camera to the left paddle
+    //camera.parent = leftPaddle;
+    camera.position = new BABYLON.Vector3(-10, 5, 0); // adjust the camera position to be behind the left paddle
+
+
+
     // Set physics properties
     let physicsPlugin = new BABYLON.CannonJSPlugin();
     scene.enablePhysics(new BABYLON.Vector3(0, -9.81, 0), physicsPlugin);
     plane.physicsImpostor = new BABYLON.PhysicsImpostor(plane, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 0, restitution: 0.9 }, scene);
-    leftPaddle.physicsImpostor = new BABYLON.PhysicsImpostor(leftPaddle, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 1, restitution: 0.1 }, scene);
-    rightPaddle.physicsImpostor = new BABYLON.PhysicsImpostor(rightPaddle, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 1, restitution: 0.1 }, scene);
+    leftPaddle.physicsImpostor = new BABYLON.PhysicsImpostor(leftPaddle, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 100000, restitution: 0.1 }, scene);
+    rightPaddle.physicsImpostor = new BABYLON.PhysicsImpostor(rightPaddle, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 100000, restitution: 0.1 }, scene);
     ball.physicsImpostor = new BABYLON.PhysicsImpostor(ball, BABYLON.PhysicsImpostor.SphereImpostor, { mass: 1, restitution: 1.0 }, scene);
 
     // Add event listener to move left paddle
