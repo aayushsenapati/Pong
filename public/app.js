@@ -1,4 +1,4 @@
-let canvas = document.getElementById("renderCanvas");
+let canvas = document.getElementById("gameCanvas");
 let engine = new BABYLON.Engine(canvas, true);
 
 let createScene = function () {

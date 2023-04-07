@@ -6,6 +6,8 @@ const app = express();
 const server = http.Server(app);
 const io = socketIO(server);
 
+app.use(express.static('public'));
+
 // Store all the rooms
 const rooms = {};
 
