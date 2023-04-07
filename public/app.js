@@ -18,9 +18,9 @@ let createScene = function () {
     plane.rotation.x = Math.PI / 2;
 
     // Create paddles
-    let leftPaddle = BABYLON.MeshBuilder.CreateBox("leftPaddle", { height: 1, width: 2, depth: 0.5 }, scene);
+    let leftPaddle = BABYLON.MeshBuilder.CreateBox("leftPaddle", { height: 0.5, width: 0.5, depth: 2 }, scene);
     leftPaddle.material = material;
-    let rightPaddle = BABYLON.MeshBuilder.CreateBox("rightPaddle", { height: 1, width: 2, depth: 0.5 }, scene);
+    let rightPaddle = BABYLON.MeshBuilder.CreateBox("rightPaddle", { height: 0.5, width: 0.5, depth: 2 }, scene);
     leftPaddle.position.x = -4;
     rightPaddle.position.x = 4;
     leftPaddle.position.y = rightPaddle.position.y = 0.5;
