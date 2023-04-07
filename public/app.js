@@ -72,8 +72,7 @@ let createScene = function () {
     rightPaddle.physicsImpostor = new BABYLON.PhysicsImpostor(rightPaddle, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 1000000000, restitution: 0.1 }, scene);
     ball.physicsImpostor = new BABYLON.PhysicsImpostor(ball, BABYLON.PhysicsImpostor.SphereImpostor, { mass: 1, restitution: 0.9 }, scene);
     
-
-    
+  
     
     // Add event listener to move left paddle
     document.addEventListener('keydown', function (event) {
@@ -86,6 +85,7 @@ let createScene = function () {
         }
     });
     
+    ball.physicsImpostor.setLinearVelocity(new BABYLON.Vector3(-4, 0, 0));
     // Create variables for ball movement
     // Create variables for ball movement
     let xDirection = Math.random() < 0.5 ? -1 : 1;
@@ -95,9 +95,32 @@ let createScene = function () {
     let moveBall = function () {
         //ball.position.x += xDirection * 0.04;
         // ball.position.z += zDirection * 0.04;
-        ball.physicsImpostor.setLinearVelocity(new BABYLON.Vector3(4, 0, 0));
         
+        //wall collision handlers 
         
+
+          ball.physicsImpostor.registerOnPhysicsCollide(leftPaddle.physicsImpostor, (main, collided, contact) => {
+            console.log("Collision detected!");
+           console.log(contact);
+            
+          });
+          ball.physicsImpostor.registerOnPhysicsCollide(wall1.physicsImpostor, (main, collided) => {
+            ball.physicsImpostor.setLinearVelocity(new BABYLON.Vector3(4, 0, 0));
+            console.log(ball.physicsImpostor.getLinearVelocity());
+          });
+          ball.physicsImpostor.registerOnPhysicsCollide(wall2.physicsImpostor, (main, collided) => {
+            ball.physicsImpostor.setLinearVelocity(new BABYLON.Vector3(4, 0, 0));
+            console.log(ball.physicsImpostor.getLinearVelocity());
+          });
+          ball.physicsImpostor.registerOnPhysicsCollide(wall3.physicsImpostor, (main, collided) => {
+            ball.physicsImpostor.setLinearVelocity(new BABYLON.Vector3(4, 0, 0));
+            console.log(ball.physicsImpostor.getLinearVelocity());
+          });
+          ball.physicsImpostor.registerOnPhysicsCollide(wall4.physicsImpostor, (main, collided) => {
+            ball.physicsImpostor.setLinearVelocity(new BABYLON.Vector3(4, 0, 0));
+            console.log(ball.physicsImpostor.getLinearVelocity());
+          });
+
         // Check for collisions with the paddles
         if (ball.intersectsMesh(leftPaddle, false)) {
             xDirection = 1;
