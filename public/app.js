@@ -63,12 +63,12 @@ let createScene = function () {
     // Create variables for ball movement
     // Create variables for ball movement
     let xDirection = Math.random() < 0.5 ? -1 : 1;
-    let yDirection = Math.random() < 0.5 ? -1 : 1;
+    let zDirection = Math.random() < 0.5 ? -1 : 1;
 
     // Move the ball
     let moveBall = function () {
         ball.position.x += xDirection * 0.1;
-        ball.position.z += yDirection * 0.1;
+        ball.position.z += zDirection * 0.1;
 
         // Check for collisions with the paddles
         if (ball.intersectsMesh(leftPaddle, false)) {
@@ -82,7 +82,7 @@ let createScene = function () {
             xDirection *= -1;
         }
         if (ball.position.z < -4.5 || ball.position.z > 4.5) {
-            yDirection *= -1;
+            zDirection *= -1;
         }
     };
 
