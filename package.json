@@ -1,35 +1,23 @@
 {
-  "name": "real-Time-multiplayer-game",
-  "version": "0.0.1",
-  "description": "Real-Time Multiplayer Game using BabylonJS, socket.io, NodeJS",
-  "main": "server.js",
+  "name": "pong",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
   "scripts": {
-    "start": "node server.js"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/d3llafr33/Real-time-multiplayer-game-with-BabylonJS-and-socket.io"
+    "url": "git+https://github.com/aayushsenapati/Pong.git"
   },
-  "keywords": [
-    "realtime",
-    "game",
-    "BabylonJS",
-    "3D",
-    "Game",
-    "Multiplayer",
-    "socket.io",
-    "NodeJS",
-    "HTML5",
-    "javascript"
-  ],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/aayushsenapati/Pong/issues"
+  },
+  "homepage": "https://github.com/aayushsenapati/Pong#readme",
   "dependencies": {
     "babylonjs": "^5.54.0",
-    "express": "4.14.x",
-    "socket.io": "1.4.x"
-  },
-  "engines": {
-    "node": ">= 0.10.0"
-  },
-  "author": "Alessio Della Libera",
-  "license": "MIT"
+    "socket.io": "^4.6.1"
+  }
 }
