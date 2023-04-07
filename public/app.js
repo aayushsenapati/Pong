@@ -2,7 +2,9 @@ let canvas = document.getElementById("gameCanvas");
 let engine = new BABYLON.Engine(canvas, true);
 
 let createScene = function () {
+    let physicsPlugin = new BABYLON.CannonJSPlugin();
     let scene = new BABYLON.Scene(engine);
+    scene.enablePhysics(new BABYLON.Vector3(0, 0, 0), physicsPlugin);
     scene.clearColor = new BABYLON.Color4(0, 0, 0, 1);
 
     let material = new BABYLON.StandardMaterial("material", scene);
@@ -17,13 +19,36 @@ let createScene = function () {
     plane.position.y = 0;
     plane.rotation.x = Math.PI / 2;
 
-    // Create paddles
+    // Create paddles and walls
+
+    let wall1 = BABYLON.MeshBuilder.CreateBox("wall1", { height: 0.5, width: 10, depth: 0.3 }, scene);  //wall farthest from camera
+    wall1.material = material;
+    wall1.position.x = 4.5;
+    wall1.position.z = 0;
+    wall1.rotation.y = Math.PI / 2;
+    
+    let wall2 = BABYLON.MeshBuilder.CreateBox("wall2", { height: 0.5, width: 10, depth: 0.3 }, scene); //wall closest to camera
+    wall2.material = material;
+    wall2.position.x = -4.75;
+    wall2.position.z = 0;
+    wall2.rotation.y = Math.PI / 2;
+    
+    let wall3 = BABYLON.MeshBuilder.CreateBox("wall3", { height: 0.5, width: 10, depth: 0.3 }, scene); //wall to the right of camera
+    wall3.material = material;
+    wall3.position.x = 0;
+    wall3.position.z = -4.8;
+
+    let wall4 = BABYLON.MeshBuilder.CreateBox("wall4", { height: 0.5, width: 10, depth: 0.3 }, scene); //wall to the left of camera
+    wall4.material = material;
+    wall4.position.x = 0;
+    wall4.position.z = 4.8;
+    
     let leftPaddle = BABYLON.MeshBuilder.CreateBox("leftPaddle", { height: 0.5, width: 0.5, depth: 2 }, scene);
     leftPaddle.material = material;
     let rightPaddle = BABYLON.MeshBuilder.CreateBox("rightPaddle", { height: 0.5, width: 0.5, depth: 2 }, scene);
     leftPaddle.position.x = -4;
     rightPaddle.position.x = 4;
-    leftPaddle.position.y = rightPaddle.position.y = 0.5;
+    leftPaddle.position.y = rightPaddle.position.y = 0.3;
 
     // Create ball
     let ball = BABYLON.MeshBuilder.CreateSphere("ball", { diameter: 0.5 }, scene);
@@ -39,16 +64,17 @@ let createScene = function () {
     //camera.parent = leftPaddle;
     camera.position = new BABYLON.Vector3(-10, 5, 0); // adjust the camera position to be behind the left paddle
 
-
-
+    
     // Set physics properties
-    let physicsPlugin = new BABYLON.CannonJSPlugin();
     scene.enablePhysics(new BABYLON.Vector3(0, -9.81, 0), physicsPlugin);
     plane.physicsImpostor = new BABYLON.PhysicsImpostor(plane, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 0, restitution: 0.9 }, scene);
-    leftPaddle.physicsImpostor = new BABYLON.PhysicsImpostor(leftPaddle, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 100000, restitution: 0.1 }, scene);
-    rightPaddle.physicsImpostor = new BABYLON.PhysicsImpostor(rightPaddle, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 100000, restitution: 0.1 }, scene);
-    ball.physicsImpostor = new BABYLON.PhysicsImpostor(ball, BABYLON.PhysicsImpostor.SphereImpostor, { mass: 1, restitution: 1.0 }, scene);
+    leftPaddle.physicsImpostor = new BABYLON.PhysicsImpostor(leftPaddle, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 1000000000,  restitution: 0.1 }, scene);
+    rightPaddle.physicsImpostor = new BABYLON.PhysicsImpostor(rightPaddle, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 1000000000, restitution: 0.1 }, scene);
+    ball.physicsImpostor = new BABYLON.PhysicsImpostor(ball, BABYLON.PhysicsImpostor.SphereImpostor, { mass: 1, restitution: 0.9 }, scene);
+    
 
+    
+    
     // Add event listener to move left paddle
     document.addEventListener('keydown', function (event) {
         if (event.code === 'KeyA' && leftPaddle.position.z < 4) {
@@ -59,17 +85,19 @@ let createScene = function () {
             socket.emit('paddleMoved', { player: 'left', position: leftPaddle.position.z });
         }
     });
-
+    
     // Create variables for ball movement
     // Create variables for ball movement
     let xDirection = Math.random() < 0.5 ? -1 : 1;
     let zDirection = Math.random() < 0.5 ? -1 : 1;
-
+    
     // Move the ball
     let moveBall = function () {
-        ball.position.x += xDirection * 0.1;
-        ball.position.z += zDirection * 0.1;
-
+        //ball.position.x += xDirection * 0.04;
+        // ball.position.z += zDirection * 0.04;
+        ball.physicsImpostor.setLinearVelocity(new BABYLON.Vector3(4, 0, 0));
+        
+        
         // Check for collisions with the paddles
         if (ball.intersectsMesh(leftPaddle, false)) {
             xDirection = 1;
@@ -78,11 +106,18 @@ let createScene = function () {
         }
 
         // Check for collisions with the walls
-        if (ball.position.x < -4.5 || ball.position.x > 4.5) {
-            xDirection *= -1;
+        if (ball.intersectsMesh(wall2, false)) {
+            xDirection = 1;
         }
-        if (ball.position.z < -4.5 || ball.position.z > 4.5) {
-            zDirection *= -1;
+        if (ball.intersectsMesh(wall1, false)) {
+            xDirection = -1;
+        }
+        
+        if (ball.intersectsMesh(wall3, false)) {
+            zDirection = 1;
+        }
+        if (ball.intersectsMesh(wall4, false)) {
+            zDirection = -1;
         }
     };
 
@@ -95,6 +130,7 @@ let createScene = function () {
 };
 
 let scene = createScene();
+
 
 // Resize the canvas when the window is resized
 window.addEventListener("resize", function () {
