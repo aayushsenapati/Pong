@@ -16,13 +16,14 @@
     "BabylonJS",
     "3D",
     "Game",
-	"Multiplayer",
+    "Multiplayer",
     "socket.io",
     "NodeJS",
     "HTML5",
     "javascript"
   ],
-   "dependencies": {
+  "dependencies": {
+    "babylonjs": "^5.54.0",
     "express": "4.14.x",
     "socket.io": "1.4.x"
   },
