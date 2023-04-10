@@ -23,35 +23,43 @@ let createScene = function () {
     let rightPaddle = BABYLON.MeshBuilder.CreateBox("rightPaddle", { height: 0.5, width: 0.1, depth: 2 }, scene);
     leftPaddle.position.x = -5.95;
     rightPaddle.position.x = 5.95;
-    leftPaddle.position.y = rightPaddle.position.y = 0.5;
+    leftPaddle.position.y = rightPaddle.position.y = 0.25;
 
     // Create ball
     let ball = BABYLON.MeshBuilder.CreateSphere("ball", { diameter: 0.5 }, scene);
     ball.position.y = 0.5;
 
-    ball.checkCollisions = true;
-    leftPaddle.checkCollisions = true;
-    rightPaddle.checkCollisions = true;
+    let leftWall= BABYLON.MeshBuilder.CreateBox("leftWall", { height: 0.5, width: 0.1, depth: 12 }, scene);
+    leftWall.position.x = -6.05;
+
+    let rightWall= BABYLON.MeshBuilder.CreateBox("leftWall", { height: 0.5, width: 0.1, depth: 12 }, scene);
+    rightWall.position.x = 6.05;
+
+    
 
 
     // Camera
     let camera = new BABYLON.FreeCamera("camera", new BABYLON.Vector3(-9, 3, 0), scene);
     camera.rotation.y = Math.PI / 2; // rotate the camera to face the other paddle
-    camera.rotation.x = Math.PI / 5;
+    camera.rotation.x = Math.PI / 6;
 
     // Attach the camera to the left paddle
     //camera.parent = leftPaddle;
-    camera.position = new BABYLON.Vector3(-12, 5, 0); // adjust the camera position to be behind the left paddle
+    camera.position = new BABYLON.Vector3(-12, 7, 0); // adjust the camera position to be behind the left paddle
 
-
+    
+    
 
     // Set physics properties
     let physicsPlugin = new BABYLON.CannonJSPlugin();
     scene.enablePhysics(new BABYLON.Vector3(0, -9.81, 0), physicsPlugin);
+    
     plane.physicsImpostor = new BABYLON.PhysicsImpostor(plane, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 0, restitution: 0.2 }, scene);
     leftPaddle.physicsImpostor = new BABYLON.PhysicsImpostor(leftPaddle, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 10000, restitution: 0.1, ignoreGravity: true }, scene);
+    leftWall.physicsImpostor = new BABYLON.PhysicsImpostor(leftWall, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 0, restitution: 0.1,ignoreGravity:true}, scene);
+    rightWall.physicsImpostor = new BABYLON.PhysicsImpostor(rightWall, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 0, restitution: 0.1,ignoreGravity:true}, scene);
     rightPaddle.physicsImpostor = new BABYLON.PhysicsImpostor(rightPaddle, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 10000, restitution: 0.1, ignoreGravity: true }, scene);
-    ball.physicsImpostor = new BABYLON.PhysicsImpostor(ball, BABYLON.PhysicsImpostor.SphereImpostor, { mass: 1, restitution: 1.0 }, scene);
+    ball.physicsImpostor = new BABYLON.PhysicsImpostor(ball, BABYLON.PhysicsImpostor.SphereImpostor, { mass: 1, restitution: 1}, scene);
 
     // Add event listener to move left paddle
     document.addEventListener('keydown', function (event) {
@@ -63,8 +71,6 @@ let createScene = function () {
             socket.emit('paddleMoved', { player: 'left', position: leftPaddle.position.z });
         }
     });
-
-
     // Create variables for ball movement
     let xDirection = Math.random() < 0.6 ? -1 : 1;
     let yDirection = Math.random() < 0.6 ? -1 : 1;
@@ -76,20 +82,26 @@ let createScene = function () {
 
         
         // Set up the collision callback for the ball
-        ball.onCollide = function (collidedMesh) {
-            if ((collidedMesh === leftPaddle) && ball.intersectsMesh(leftPaddle, false)) {
-                xDirection = 1;
-                //ball.position.x = leftPaddle.position.x + leftPaddle.scaling.x / 2 + ball.scaling.x / 2;
-            } else if ((collidedMesh === rightPaddle) && ball.intersectsMesh(rightPaddle, false)) {
-                xDirection = -1;
-                //ball.position.x = rightPaddle.position.x - rightPaddle.scaling.x / 2 - ball.scaling.x / 2;
-            }
-        }
+        
+
+        ball.physicsImpostor.registerOnPhysicsCollide(leftPaddle.physicsImpostor, function(main, collided) {
+            xDirection = 1;
+        });
+        ball.physicsImpostor.registerOnPhysicsCollide(rightPaddle.physicsImpostor, function(main, collided) {
+            xDirection = -1;
+        });
+        ball.physicsImpostor.registerOnPhysicsCollide(leftWall.physicsImpostor, function(main, collided) {
+            xDirection = 1;
+        });
+        ball.physicsImpostor.registerOnPhysicsCollide(rightWall.physicsImpostor, function(main, collided) {
+            xDirection = -1;
+        });
+        
     
     // Check for collisions with the walls
-    if (ball.position.x <= -5.75 || ball.position.x >= 5.75) {
+    /* if (ball.position.x <= -5.75 || ball.position.x >= 5.75) {
         xDirection *= -1;
-    }
+    } */
     if (ball.position.z <= -5.75 || ball.position.z >= 5.75) {
         yDirection *= -1;
     }
@@ -98,6 +110,7 @@ let createScene = function () {
 // Start the game loop
 scene.onBeforeRenderObservable.add(function () {
     moveBall();
+    
 });
 
 return scene;
@@ -112,6 +125,7 @@ window.addEventListener("resize", function () {
 
 // Start the engine
 engine.runRenderLoop(function () {
+    
     scene.render();
 });
 
