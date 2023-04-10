@@ -71,8 +71,8 @@ let createScene = function () {
     // Set physics properties
     scene.enablePhysics(new BABYLON.Vector3(0, -9.81, 0), physicsPlugin);
     plane.physicsImpostor = new BABYLON.PhysicsImpostor(plane, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 0, restitution: 1 }, scene);
-    leftPaddle.physicsImpostor = new BABYLON.PhysicsImpostor(leftPaddle, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 1000000000,  restitution: 1 }, scene);
-    rightPaddle.physicsImpostor = new BABYLON.PhysicsImpostor(rightPaddle, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 1000000000, restitution: 1 }, scene);
+    leftPaddle.physicsImpostor = new BABYLON.PhysicsImpostor(leftPaddle, BABYLON.PhysicsImpostor.BoxImpostor, { mass:0,  restitution: 1 }, scene);
+    rightPaddle.physicsImpostor = new BABYLON.PhysicsImpostor(rightPaddle, BABYLON.PhysicsImpostor.BoxImpostor, { mass:0, restitution: 1 }, scene);
     wall4.physicsImpostor = new BABYLON.PhysicsImpostor(wall4, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 0, restitution: 1  }, scene);
     wall1.physicsImpostor = new BABYLON.PhysicsImpostor(wall1, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 0, restitution: 1  }, scene);
     wall2.physicsImpostor = new BABYLON.PhysicsImpostor(wall2, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 0, restitution: 1  }, scene);
@@ -105,7 +105,7 @@ let createScene = function () {
         
         //wall collision handlers 
         let vel = ball.physicsImpostor.getLinearVelocity();
-        ball.physicsImpostor.setLinearVelocity(new BABYLON.Vector3(vel.x, -10, vel.z));
+        ball.physicsImpostor.setLinearVelocity(new BABYLON.Vector3(vel.x, 0, vel.z));
 
           ball.physicsImpostor.registerOnPhysicsCollide(leftPaddle.physicsImpostor, (main, collided) => {
            
