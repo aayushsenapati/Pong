@@ -29,7 +29,11 @@ io.on("connection", (socket) => {
         }
     });
 
-    //socket.on("paddlePosition", (data) => {});
+    socket.on("paddlePos", (data) => {
+
+        console.log("paddlePosition updated");
+        socket.to(roomId).emit("paddleReply", data);
+    });
 
     socket.on("createRoom", () => {
         const roomId = Math.floor(Math.random()*10000);

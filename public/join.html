@@ -41,10 +41,10 @@
         function Game() {
             let canvas = document.getElementById("gameCanvas");
             let engine = new BABYLON.Engine(canvas, true);
-            var socket;
+           
 
             let createScene = function () {
-                socket = io().connect();
+                
                 let scene = new BABYLON.Scene(engine);
                 scene.clearColor = new BABYLON.Color4(0, 0, 0, 1);
 
@@ -165,8 +165,10 @@
                     if (event.code === "KeyA" && leftPaddle.position.z < 5) {
                         leftPaddle.position.z += 0.5;
                         //socket.emit('paddleMoved', { player: 'left', position: leftPaddle.position.z });
+                        socket.emit("paddlePos", leftPaddle.position);
                     } else if (event.code === "KeyD" && leftPaddle.position.z > -5) {
                         leftPaddle.position.z -= 0.5;
+                        socket.emit("paddlePos", leftPaddle.position);
                         //socket.emit('paddleMoved', { player: 'left', position: leftPaddle.position.z });
                     }
                 });
@@ -174,14 +176,18 @@
                 let xDirection = Math.random() < 0.6 ? -1 : 1;
                 let yDirection = Math.random() < 0.6 ? -1 : 1;
 
+                socket.on("paddleReply", (data) => {
+
+                  console.log("position received");
+                    rightPaddle.position.x = data.x;
+                    rightPaddle.position.y = data.y;
+                    rightPaddle.position.z = data.z;
+                })
                 // Move the ball
                 let moveBall = function () {
-                    let leftPaddlePos = {
-                        x: leftPaddle.position.x,
-                        y: leftPaddle.position.y,
-                        z: leftPaddle.position.z,
-                    };
-                    socket.emit("paddlePosition", leftPaddlePos);
+                    
+
+                    //socket.emit("paddlePos", leftPaddlePos);
                     ball.position.x += xDirection * 0.1;
                     ball.position.z += yDirection * 0.1;
 
@@ -260,7 +266,7 @@
             function createRoom() {
                 socket.emit("createRoom");
             }
-
+        
             return (
                 <div>
                     {roomState === "waiting" ? (
