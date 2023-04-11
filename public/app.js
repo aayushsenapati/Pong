@@ -71,8 +71,8 @@ let createScene = function () {
     // Set physics properties
     scene.enablePhysics(new BABYLON.Vector3(0, -9.81, 0), physicsPlugin);
     plane.physicsImpostor = new BABYLON.PhysicsImpostor(plane, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 0, restitution: 1 }, scene);
-    leftPaddle.physicsImpostor = new BABYLON.PhysicsImpostor(leftPaddle, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 1000000000,  restitution: 1 }, scene);
-    rightPaddle.physicsImpostor = new BABYLON.PhysicsImpostor(rightPaddle, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 1000000000, restitution: 1 }, scene);
+    leftPaddle.physicsImpostor = new BABYLON.PhysicsImpostor(leftPaddle, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 0,  friction: 10000, restitution: 1 }, scene);
+    rightPaddle.physicsImpostor = new BABYLON.PhysicsImpostor(rightPaddle, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 0, restitution: 1 }, scene);
     wall4.physicsImpostor = new BABYLON.PhysicsImpostor(wall4, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 0, restitution: 1  }, scene);
     wall1.physicsImpostor = new BABYLON.PhysicsImpostor(wall1, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 0, restitution: 1  }, scene);
     wall2.physicsImpostor = new BABYLON.PhysicsImpostor(wall2, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 0, restitution: 1  }, scene);
@@ -91,6 +91,7 @@ let createScene = function () {
             socket.emit('paddleMoved', { player: 'left', position: leftPaddle.position.z });
         }
     });
+    
     
     ball.physicsImpostor.setLinearVelocity(new BABYLON.Vector3(5, 0, Math.random()*10));
     // Create variables for ball movement
@@ -138,7 +139,7 @@ let createScene = function () {
         } else if (ball.intersectsMesh(rightPaddle, false)) {
             xDirection = -1;
         }
-
+        
       
     };
 
