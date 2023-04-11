@@ -51,6 +51,8 @@
         let engine = new BABYLON.Engine(canvas, true);
 
         let createScene = function () {
+
+          socket - io().connect();
           let physicsPlugin = new BABYLON.CannonJSPlugin();
           let scene = new BABYLON.Scene(engine);
           scene.enablePhysics(new BABYLON.Vector3(0, 0, 0), physicsPlugin);
