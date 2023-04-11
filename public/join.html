@@ -178,10 +178,10 @@
 
                 socket.on("paddleReply", (data) => {
 
-                  console.log("position received");
-                    rightPaddle.position.x = data.x;
-                    rightPaddle.position.y = data.y;
-                    rightPaddle.position.z = data.z;
+                  console.log("position received", data);
+                    //rightPaddle.position.x = data._x;
+                    //rightPaddle.position.y = data._y;
+                    rightPaddle.position.z = -data._z;
                 })
                 // Move the ball
                 let moveBall = function () {
