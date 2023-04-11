@@ -11,19 +11,18 @@
     <script src="https://cdn.jsdelivr.net/npm/react@17.0.2/umd/react.production.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/react-dom@17.0.2/umd/react-dom.production.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/babel-standalone@6.26.0/babel.min.js"></script>
-    <script>
-        const socket = io();
-        
+    <script>const socket = io()</script>
+    <script type="text/babel">
+        function joinRoom() {
+            const roomId = document.getElementById("room-id").value;
+            if (roomId == "") return;
+            console.log(roomId)
+            socket.emit("joinRoom", roomId);
+        }
+        function createRoom() {
+            socket.emit("createRoom");
+        }
         function Join() {
-            function joinRoom() {
-                const roomId = document.getElementById("room-id").value;
-                if (roomId == "") return;
-                console.log(roomId)
-                socket.emit("joinRoom", roomId);
-            }
-            function createRoom() {
-                socket.emit("createRoom");
-            }
             return (
                 <div>
                     <label for="room-id">Enter Room ID:</label>
@@ -33,8 +32,27 @@
                 </div>)
         }
 
+        function Game() {
+            return (
+                <div>
+                    <h1>Game</h1>
+                </div>
+            )
+        }
+
+        function App() {
+            return (
+                <div>
+                    <Join />
+                    <Game />
+                </div>
+            )
+        }
+        ReactDOM.render(<App />, document.getElementById("root"));
+    </script>
 
 
+    <script>
 
         socket.on("roomFull", () => {
             console.log("Room is full");
@@ -52,7 +70,6 @@
         socket.on("userJoined", (socketId) => {
             console.log("User joined ", socketId);
         })
-
     </script>
 </body>
 
