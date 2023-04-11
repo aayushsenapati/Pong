@@ -1,7 +1,9 @@
 let canvas = document.getElementById("gameCanvas");
 let engine = new BABYLON.Engine(canvas, true);
+var socket;
 
 let createScene = function () {
+    socket=io().connect()
     let scene = new BABYLON.Scene(engine);
     scene.clearColor = new BABYLON.Color4(0, 0, 0, 1);
 
@@ -65,10 +67,10 @@ let createScene = function () {
     document.addEventListener('keydown', function (event) {
         if (event.code === 'KeyA' && leftPaddle.position.z < 5) {
             leftPaddle.position.z += 0.5;
-            socket.emit('paddleMoved', { player: 'left', position: leftPaddle.position.z });
+            //socket.emit('paddleMoved', { player: 'left', position: leftPaddle.position.z });
         } else if (event.code === 'KeyD' && leftPaddle.position.z > -5) {
             leftPaddle.position.z -= 0.5;
-            socket.emit('paddleMoved', { player: 'left', position: leftPaddle.position.z });
+            //socket.emit('paddleMoved', { player: 'left', position: leftPaddle.position.z });
         }
     });
     // Create variables for ball movement
