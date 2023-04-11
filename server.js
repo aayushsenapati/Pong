@@ -11,12 +11,15 @@ io.on("connection", (socket) => {
     console.log("A user connected");
 
     socket.on("joinRoom", (roomId) => {
+        roomId=parseInt(roomId)
         if (roomId in rooms && rooms[roomId] < 2) {
             rooms[roomId] += 1;
             socket.join(roomId);
             socket.emit("joinedRoom", roomId);
             console.log(rooms)
-            io.to(roomId).emit("userJoined", socket.id);
+            console.log("debug",socket.rooms)
+            io.in(roomId).emit("userJoined", socket.id);
+            io.in(roomId).emit("startGame");
         }
         else if(roomId in rooms){
             socket.emit("roomFull");
@@ -33,6 +36,7 @@ io.on("connection", (socket) => {
         rooms[roomId] = 1;
         console.log(rooms)
         socket.join(roomId);
+        console.log("debug creat",socket.rooms)
         socket.emit("createdRoom", roomId);
     });
 });
