@@ -79,6 +79,9 @@ let createScene = function () {
 
     // Move the ball
     let moveBall = function () {
+
+        let leftPaddlePos =  {x:leftPaddle.position.x, y:leftPaddle.position.y, z:leftPaddle.position.z};
+        socket.emit("paddlePosition",leftPaddlePos);
         ball.position.x += xDirection * 0.1;
         ball.position.z += yDirection * 0.1;
 

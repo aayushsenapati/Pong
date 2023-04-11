@@ -26,6 +26,8 @@ io.on("connection", (socket) => {
         }
     });
 
+    //socket.on("paddlePosition", (data) => {});
+
     socket.on("createRoom", () => {
         const roomId = Math.floor(Math.random()*10000);
         rooms[roomId] = 1;
