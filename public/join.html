@@ -13,23 +13,23 @@
     <script src="https://cdn.jsdelivr.net/npm/babel-standalone@6.26.0/babel.min.js"></script>
     <script>const socket = io()</script>
     <script type="text/babel">
-        function joinRoom() {
-            const roomId = document.getElementById("room-id").value;
+        function joinRoom(roomId) {
             if (roomId == "") return;
-            console.log(roomId)
+            console.log(roomId);
             socket.emit("joinRoom", roomId);
         }
         function createRoom() {
             socket.emit("createRoom");
         }
-        function Join() {
+        function Join(props) {
             return (
                 <div>
                     <label for="room-id">Enter Room ID:</label>
                     <input type="text" id="room-id" name="room-id" />
-                    <button onclick="joinRoom()">Join Room</button>
-                    <button onclick="createRoom()">Create Room</button>
-                </div>)
+                    <button onClick={() => props.joinRoom(document.getElementById("room-id").value)}>Join Room</button>
+                    <button onClick={() => props.createRoom()}>Create Room</button>
+                </div>
+            )
         }
 
         function Game() {
@@ -43,7 +43,7 @@
         function App() {
             return (
                 <div>
-                    <Join />
+                    <Join joinRoom={joinRoom} createRoom={createRoom} />
                     <Game />
                 </div>
             )
