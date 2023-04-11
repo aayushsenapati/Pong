@@ -52,7 +52,7 @@
 
         let createScene = function () {
 
-          socket - io().connect();
+          socket = io().connect();
           let physicsPlugin = new BABYLON.CannonJSPlugin();
           let scene = new BABYLON.Scene(engine);
           scene.enablePhysics(new BABYLON.Vector3(0, 0, 0), physicsPlugin);
@@ -223,21 +223,7 @@
               });
             }
           });
-          document.addEventListener("keydown", function (event) {
-            if (event.code === "KeyJ" && rightPaddle.position.z < 4) {
-              rightPaddle.position.z += 0.5;
-              socket.emit("paddleMoved", {
-                player: "left",
-                position: leftPaddle.position.z,
-              });
-            } else if (event.code === "KeyL" && rightPaddle.position.z > -4) {
-              rightPaddle.position.z -= 0.5;
-              socket.emit("paddleMoved", {
-                player: "left",
-                position: leftPaddle.position.z,
-              });
-            }
-          });
+        
 
           ball.physicsImpostor.setLinearVelocity(
             new BABYLON.Vector3(5, 0, Math.random() * 10)
@@ -343,6 +329,9 @@
       }
 
       function App() {
+        const [socket, setSocket] = useState(null);
+        const [roomId, setRoomId] = useState(null);
+        
         return (
           <div>
             <Join joinRoom={joinRoom} createRoom={createRoom} />
