@@ -10,7 +10,9 @@ var xDirection = Math.random() < 0.6 ? -1 : 1;
 var yDirection = Math.random() < 0.6 ? -1 : 1;
 
 
-var ballPos = { x: 0, z: 0 };
+var ballPos0 = { x: 3, z: 4 };
+
+
 io.on("connection", (socket) => {
     console.log("A user connected");
 
@@ -51,12 +53,32 @@ io.on("connection", (socket) => {
         socket.emit("createdRoom", roomId);
     });
 
+    socket.on("padCollide",()=>{
+        xDirection*=-1;
+        //yDirection*=Math.floor(Math.random()*10);
+        //console.log(xDirection,yDirection)
+    })
+
     socket.on("getBallPos", () => {
+        var ballPos1 = { x: -ballPos0.x, z: -ballPos0.z };
+        if (ballPos0.z <= -5.75 || ballPos0.z >= 5.75) {
+            yDirection *= -1;
+        }
+        if (ballPos0.x <= -5.75 || ballPos0.x >= 5.75) {
+            xDirection *= -1;
+        }
+        ballPos0.x += xDirection * 0.035;
+        ballPos0.z += yDirection * 0.035;
+        //yDirection=yDirection/Math.abs(yDirection)
+        //console.log("ball mov",yDirection)
         const roomIds = Array.from(socket.rooms);
-        const clients = Array.from(io.sockets.adapter.rooms.get(roomIds[1]))
-        //console.log(clients,typeof(clients))
-        io.to(clients[0]).emit("ballReply", ballPos);
-        io.to(clients[1]).emit("ballReply", ballPos);
+        const idObj = io.sockets.adapter.rooms.get(roomIds[1])
+        if (idObj) {
+            const clients = Array.from(idObj)
+            //console.log(ballPos0,ballPos1)
+            io.to(clients[0]).emit("ballReply", ballPos0);
+            io.to(clients[1]).emit("ballReply", ballPos1);
+        }
     });
 
 });

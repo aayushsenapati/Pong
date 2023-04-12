@@ -47,17 +47,25 @@
 
                 let scene = new BABYLON.Scene(engine);
                 scene.clearColor = new BABYLON.Color4(0, 0, 0, 1);
+                let glowLayer = new BABYLON.GlowLayer("glowLayer", scene);
+                glowLayer.intensity = 1.5;
+                glowLayer.blurKernelSize = 32;
 
-                let material = new BABYLON.StandardMaterial("material", scene);
-                material.diffuseColor = new BABYLON.Color3(255, 1, 1);
+                let materialB = new BABYLON.StandardMaterial("material", scene);
+                materialB.emissiveColor = new BABYLON.Color3(1, 1, 1); // Set the emissive color to white
+                let materialL = new BABYLON.StandardMaterial("material", scene);
+                materialL.emissiveColor = new BABYLON.Color3(0,1 ,0 ); // Set the emissive color to white
+                let materialR = new BABYLON.StandardMaterial("material", scene);
+                materialR.emissiveColor = new BABYLON.Color3(1, 0, 0); // Set the emissive color to white
+                //material.diffuseColor = new BABYLON.Color3(255, 1, 1);
 
-                // Light
+                /* // Light
                 let light = new BABYLON.PointLight(
                     "pointLight",
                     new BABYLON.Vector3(0, 10, 0),
                     scene
                 );
-                light.intensity = 0.8;
+                light.intensity = 0.8; */
 
                 // Create a plane
                 let plane = BABYLON.MeshBuilder.CreatePlane(
@@ -71,18 +79,25 @@
                 // Create paddles
                 let leftPaddle = BABYLON.MeshBuilder.CreateBox(
                     "leftPaddle",
-                    { height: 0.5, width: 0.1, depth: 2 },
+                    { height: 0.5, width: 0.2, depth: 2 },
                     scene
                 );
-                leftPaddle.material = material;
+                leftPaddle.material = materialL;
+                //leftPaddle.checkCollisions=true
+
+
                 let rightPaddle = BABYLON.MeshBuilder.CreateBox(
                     "rightPaddle",
-                    { height: 0.5, width: 0.1, depth: 2 },
+                    { height: 0.5, width: 0.2, depth: 2 },
                     scene
                 );
-                leftPaddle.position.x = -5.95;
-                rightPaddle.position.x = 5.95;
+                rightPaddle.material = materialR
+                //rightPaddle.checkCollisions=true
+                leftPaddle.position.x = -5.9;
+                rightPaddle.position.x = 5.9;
                 leftPaddle.position.y = rightPaddle.position.y = 0.25;
+
+
 
                 // Create ball
                 let ball = BABYLON.MeshBuilder.CreateSphere(
@@ -90,7 +105,13 @@
                     { diameter: 0.5 },
                     scene
                 );
+                ball.material=materialB
                 ball.position.y = 0.5;
+                //ball.checkCollisions = true
+
+                glowLayer.addIncludedOnlyMesh(ball);
+                glowLayer.addIncludedOnlyMesh(leftPaddle);
+                glowLayer.addIncludedOnlyMesh(rightPaddle);
 
                 let leftWall = BABYLON.MeshBuilder.CreateBox(
                     "leftWall",
@@ -170,63 +191,46 @@
                         socket.emit("paddlePos", leftPaddle.position);
                     }
                 });
-                // Create variables for ball movement
-                
+                ball.physicsImpostor.registerOnPhysicsCollide(
+                    leftPaddle.physicsImpostor,
+                    function (main, collided) {
+                        socket.emit("padCollide")
+                        //xDirection = 1;
+                    }
+                );
+                ball.physicsImpostor.registerOnPhysicsCollide(
+                    rightPaddle.physicsImpostor,
+                    function (main, collided) {
+                        socket.emit("padCollide")
+                    }
+                );
+
+               /*  if (leftPaddle.intersectsMesh(ball, true)) {
+                    socket.emit("padCollide")
+                }
+                if (rightPaddle.intersectsMesh(ball, true)) {
+                    socket.emit("padCollide")
+                }
+ */
+
 
                 socket.on("paddleReply", (data) => {
 
-                    console.log("position received", data);
+                    //console.log("position received", data);
                     //rightPaddle.position.x = data._x;
                     //rightPaddle.position.y = data._y;
                     rightPaddle.position.z = -data._z;
+                })
+                socket.on("ballReply", (data) => {
+                    //console.log("ball position received", data);
+                    ball.position.x = data.x
+                    ball.position.z = data.z
                 })
                 // Move the ball
                 let moveBall = function () {
 
                     socket.emit("getBallPos")
-                    socket.on("ballReply", (data) => {
-                        //console.log("ball position received", data);
-                        ball.position.x=data.x
-                        ball.position.z=data.z
-                    })
 
-                    /* ball.position.x += xDirection * 0.1;
-                    ball.position.z += yDirection * 0.1; */
-
-                    // Set up the collision callback for the ball
-
-                    ball.physicsImpostor.registerOnPhysicsCollide(
-                        leftPaddle.physicsImpostor,
-                        function (main, collided) {
-                            xDirection = 1;
-                        }
-                    );
-                    ball.physicsImpostor.registerOnPhysicsCollide(
-                        rightPaddle.physicsImpostor,
-                        function (main, collided) {
-                            xDirection = -1;
-                        }
-                    );
-                    ball.physicsImpostor.registerOnPhysicsCollide(
-                        leftWall.physicsImpostor,
-                        function (main, collided) {
-                            xDirection = 1;
-                        }
-                    );
-                    ball.physicsImpostor.registerOnPhysicsCollide(
-                        rightWall.physicsImpostor,
-                        function (main, collided) {
-                            xDirection = -1;
-                        }
-                    );
-
-                    // Check for collisions with the walls
-                    /* if (ball.position.x <= -5.75 || ball.position.x >= 5.75) {
-                xDirection *= -1;
-            } */
-                    if (ball.position.z <= -5.75 || ball.position.z >= 5.75) {
-                        yDirection *= -1;
-                    }
                 };
 
                 // Start the game loop
