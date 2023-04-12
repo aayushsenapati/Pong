@@ -6,9 +6,11 @@ const io = require("socket.io")(http);
 app.use(express.static(__dirname + "/public"));
 
 const rooms = {};
+var xDirection = Math.random() < 0.6 ? -1 : 1;
+var yDirection = Math.random() < 0.6 ? -1 : 1;
 
 
-var ballPos= {x:0,z:0};
+var ballPos = { x: 0, z: 0 };
 io.on("connection", (socket) => {
     console.log("A user connected");
 
@@ -19,7 +21,7 @@ io.on("connection", (socket) => {
             socket.join(roomId);
             socket.emit("joinedRoom", roomId);
             console.log(rooms)
-            
+
             io.in(roomId).emit("userJoined", socket.id);
             io.in(roomId).emit("startGame");
         }
