@@ -8,7 +8,7 @@ app.use(express.static(__dirname + "/public"));
 const rooms = {};
 
 
-
+var ballPos= {x:0,z:0};
 io.on("connection", (socket) => {
     console.log("A user connected");
 
@@ -32,11 +32,11 @@ io.on("connection", (socket) => {
     });
 
     socket.on("paddlePos", (data) => {
-
-
+        //console.log("look here",socket.rooms)
         const roomIds = Array.from(socket.rooms);
-        console.log(roomIds);
-        console.log("paddlePosition updated");
+        //console.log("paddlePosition updated");
+        const clients = Array.from(io.sockets.adapter.rooms.get(roomIds[1]))
+        //console.log(clients,typeof(clients))
         socket.to(roomIds[1]).emit("paddleReply", data);
     });
 
@@ -48,6 +48,15 @@ io.on("connection", (socket) => {
         console.log("debug creat", socket.rooms)
         socket.emit("createdRoom", roomId);
     });
+
+    socket.on("getBallPos", () => {
+        const roomIds = Array.from(socket.rooms);
+        const clients = Array.from(io.sockets.adapter.rooms.get(roomIds[1]))
+        //console.log(clients,typeof(clients))
+        io.to(clients[0]).emit("ballReply", ballPos);
+        io.to(clients[1]).emit("ballReply", ballPos);
+    });
+
 });
 
 http.listen(3000, () => {

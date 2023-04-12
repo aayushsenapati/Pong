@@ -184,10 +184,15 @@
                 // Move the ball
                 let moveBall = function () {
 
+                    socket.emit("getBallPos")
+                    socket.on("ballReply", (data) => {
+                        //console.log("ball position received", data);
+                        ball.position.x=data.x
+                        ball.position.z=data.z
+                    })
 
-                    //socket.emit("paddlePos", leftPaddlePos);
-                    ball.position.x += xDirection * 0.1;
-                    ball.position.z += yDirection * 0.1;
+                    /* ball.position.x += xDirection * 0.1;
+                    ball.position.z += yDirection * 0.1; */
 
                     // Set up the collision callback for the ball
 
