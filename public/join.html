@@ -6,9 +6,9 @@
 </head>
 
 <body>
+    <canvas id="gameCanvas"> </canvas>
     <div id="root"></div>
 
-    <canvas id="gameCanvas"> </canvas>
     <script src="/socket.io/socket.io.js"></script>
     <script src="https://cdn.babylonjs.com/cannon.js"></script>
     <script src="https://cdn.babylonjs.com/babylon.js"></script>
@@ -41,10 +41,10 @@
         function Game() {
             let canvas = document.getElementById("gameCanvas");
             let engine = new BABYLON.Engine(canvas, true);
-           
+
 
             let createScene = function () {
-                
+
                 let scene = new BABYLON.Scene(engine);
                 scene.clearColor = new BABYLON.Color4(0, 0, 0, 1);
 
@@ -164,12 +164,10 @@
                 document.addEventListener("keydown", function (event) {
                     if (event.code === "KeyA" && leftPaddle.position.z < 5) {
                         leftPaddle.position.z += 0.5;
-                        //socket.emit('paddleMoved', { player: 'left', position: leftPaddle.position.z });
                         socket.emit("paddlePos", leftPaddle.position);
                     } else if (event.code === "KeyD" && leftPaddle.position.z > -5) {
                         leftPaddle.position.z -= 0.5;
                         socket.emit("paddlePos", leftPaddle.position);
-                        //socket.emit('paddleMoved', { player: 'left', position: leftPaddle.position.z });
                     }
                 });
                 // Create variables for ball movement
@@ -178,14 +176,14 @@
 
                 socket.on("paddleReply", (data) => {
 
-                  console.log("position received", data);
+                    console.log("position received", data);
                     //rightPaddle.position.x = data._x;
                     //rightPaddle.position.y = data._y;
                     rightPaddle.position.z = -data._z;
                 })
                 // Move the ball
                 let moveBall = function () {
-                    
+
 
                     //socket.emit("paddlePos", leftPaddlePos);
                     ball.position.x += xDirection * 0.1;
@@ -266,7 +264,7 @@
             function createRoom() {
                 socket.emit("createRoom");
             }
-        
+
             return (
                 <div>
                     {roomState === "waiting" ? (
