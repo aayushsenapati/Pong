@@ -59,6 +59,8 @@ io.on("connection", (socket) => {
         //console.log(xDirection,yDirection)
     })
 
+    
+
     socket.on("getBallPos", () => {
         var ballPos1 = { x: -ballPos0.x, z: -ballPos0.z };
         if (ballPos0.z <= -5.75 || ballPos0.z >= 5.75) {
