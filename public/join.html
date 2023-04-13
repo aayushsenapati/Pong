@@ -222,7 +222,7 @@
                     }
                 );
 
-                leftWall.physicsImpostor.registerOnPhysicsCollide(
+                /* leftWall.physicsImpostor.registerOnPhysicsCollide(
                     ball.physicsImpostor,
                     function (main, collided) {
                         props.func("lose")
@@ -234,7 +234,7 @@
                         props.func("win")
                     }
                 );
-
+ */
                 socket.on("paddleReply", (data) => {
 
                     //console.log("position received", data);
