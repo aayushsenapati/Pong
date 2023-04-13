@@ -59,6 +59,10 @@ io.on("connection", (socket) => {
         //console.log(xDirection,yDirection)
     })
 
+    socket.on("lost",()=>{
+        socket.to(Array.from(socket.rooms)[1]).emit("win");
+    })
+
     
 
     socket.on("getBallPos", () => {

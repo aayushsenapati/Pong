@@ -222,19 +222,20 @@
                     }
                 );
 
-                /* leftWall.physicsImpostor.registerOnPhysicsCollide(
+                 leftWall.physicsImpostor.registerOnPhysicsCollide(
                     ball.physicsImpostor,
                     function (main, collided) {
-                        props.func("lose")
+                        socket.emit("lost")
+                        props.func("lost");
                     }
                 );
                 rightWall.physicsImpostor.registerOnPhysicsCollide(
                     ball.physicsImpostor,
                     function (main, collided) {
-                        props.func("win")
+                        
                     }
                 );
- */
+                    
                 socket.on("paddleReply", (data) => {
 
                     //console.log("position received", data);
@@ -291,7 +292,9 @@
                 setRoomState("game");
             });
             
-            
+            socket.on("win", () => {
+                        setResult("win");
+                    })
 
             function joinRoom(roomId) {
                 if (roomId == "") return;
